@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
 import { userModule } from './user/user.module';
-import { JwtService } from '@nestjs/jwt';
+import { JwtGuard } from './guards/jwt.guard';
 
 @Module({
   imports: [
@@ -11,6 +11,6 @@ import { JwtService } from '@nestjs/jwt';
     userModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtService, JwtService],
+  providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

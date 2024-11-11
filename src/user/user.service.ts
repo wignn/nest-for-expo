@@ -105,11 +105,11 @@ export class UserService {
         ],
       },
     });
-  
+
     if (!users || users.length === 0) {
       throw new HttpException('User not found', 400);
     }
-  
+
     return users.map(user => ({
       id: user.id,
       name: user.name,
@@ -117,8 +117,22 @@ export class UserService {
       email: user.email,
       profilePicture: user.profilePicture,
       backgroundPicture: user.backgroundPicture,
-      createdAt: user.createdAt.toISOString(), 
+      createdAt: user.createdAt.toISOString(),
     }));
   }
-  
+
+  async findALl(): Promise<userFindResponse[]> {
+    {
+      const users = await this.prismaService.user.findMany();
+      return users.map(user => ({
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        backgroundPicture: user.backgroundPicture,
+        createdAt: user.createdAt.toISOString(),
+      }));
+    }
+  }
 }
