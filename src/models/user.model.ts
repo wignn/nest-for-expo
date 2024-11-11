@@ -24,8 +24,19 @@ export class UserResponse {
     id: string;
     username: string;
     name: string;
-    backendTokens:{
+    backendTokens: {
         accessToken: string;
         refreshToken: string;
     }
 }
+
+export class userFindResponse {
+    id: string;
+    email: string;
+    username: string;
+    name: string;
+    createdAt: string;
+    backgroundPicture?: string;
+    profilePicture?: string;
+
+}[]

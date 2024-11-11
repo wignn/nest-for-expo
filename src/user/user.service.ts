@@ -1,4 +1,3 @@
-import { user } from './../../node_modules/.prisma/client/index.d';
 import { JwtService } from '@nestjs/jwt';
 import { ValidationService } from './../common/validate.service';
 import { PrismaService } from '../common/prisma.service';
@@ -7,7 +6,7 @@ import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { UserValidation } from './user.validation';
 import * as bcrypt from 'bcrypt';
-import { CreateUserRequest, CreateUserResponse, LoginUserRequest, UserResponse } from 'src/models/user.model';
+import { CreateUserRequest, CreateUserResponse, LoginUserRequest, userFindResponse, UserResponse } from 'src/models/user.model';
 
 @Injectable()
 export class UserService {
@@ -53,8 +52,6 @@ export class UserService {
       request,
     );
 
-
-
     const user = await this.prismaService.user.findFirst({
       where: {
         username: loginRequest.username,
@@ -96,4 +93,32 @@ export class UserService {
       }
     }
   }
+
+  async findByQuery(query: string): Promise<userFindResponse[]> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        OR: [
+          { id: query },
+          { username: { contains: query } },
+          { email: query },
+          { name: { contains: query } },
+        ],
+      },
+    });
+  
+    if (!users || users.length === 0) {
+      throw new HttpException('User not found', 400);
+    }
+  
+    return users.map(user => ({
+      id: user.id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      backgroundPicture: user.backgroundPicture,
+      createdAt: user.createdAt.toISOString(), 
+    }));
+  }
+  
 }

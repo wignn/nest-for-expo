@@ -3,20 +3,15 @@ import { UserService } from './user.service';
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   Param,
   Patch,
   Post,
-  Put,
-  Request,
   UseGuards,
 } from '@nestjs/common';
-;
-import { JwtGuard } from './guards/jwt.guard';
-import { RefreshJwtGuard } from './guards/refresh.guard';
-import { CreateUserRequest, CreateUserResponse, LoginUserRequest, UserResponse } from 'src/models/user.model';
+import { CreateUserRequest, CreateUserResponse, LoginUserRequest, userFindResponse, UserResponse } from 'src/models/user.model';
+import { JwtGuard } from '../guards/jwt.guard';
 
 @Controller('/api/users')
 export class UserController {
@@ -33,5 +28,13 @@ export class UserController {
   @Patch()
   async Login(@Body() request: LoginUserRequest): Promise<UserResponse> {
     return this.UserService.login(request);
+  }
+
+  @UseGuards(JwtGuard)
+  @HttpCode(200)
+  @Get(':query')
+  async GetUser(@Param('query') query: string): Promise<userFindResponse[]> {
+    console.log(query);
+    return this.UserService.findByQuery(query);
   }
 }
