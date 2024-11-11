@@ -1,5 +1,4 @@
 
-
 export class CreateUserRequest {
     email: string;
     password: string;
@@ -7,7 +6,7 @@ export class CreateUserRequest {
     name: string;
 }
 
-export class CreateUserResponse {
+export class UserResponse {
     id: string;
     email: string;
     name: string;
@@ -20,7 +19,7 @@ export class LoginUserRequest {
     password: string;
 }
 
-export class UserResponse {
+export class UserLoginResponse {
     id: string;
     username: string;
     name: string;
@@ -38,5 +37,14 @@ export class userFindResponse {
     createdAt: string;
     backgroundPicture?: string;
     profilePicture?: string;
+} []
 
-}[]
+
+export class UpdateUserRequest {
+    bio?: string;
+    name?: string;
+    profilePicture?: string
+    backgroundPicture?: string
+    password?: string;
+    token?: string;
+}

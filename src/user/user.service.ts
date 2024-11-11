@@ -6,7 +6,7 @@ import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { UserValidation } from './user.validation';
 import * as bcrypt from 'bcrypt';
-import { CreateUserRequest, CreateUserResponse, LoginUserRequest, userFindResponse, UserResponse } from 'src/models/user.model';
+import { CreateUserRequest, LoginUserRequest, UpdateUserRequest, userFindResponse, UserLoginResponse, UserResponse } from 'src/models/user.model';
 
 @Injectable()
 export class UserService {
@@ -17,7 +17,7 @@ export class UserService {
     private jwtService: JwtService,
   ) { }
 
-  async createUser(request: CreateUserRequest): Promise<CreateUserResponse> {
+  async createUser(request: CreateUserRequest): Promise<UserResponse> {
     this.logger.info(`creating user`)
     const CreateUserRequest: CreateUserRequest = this.validationService.validate(UserValidation.CREATE, request);
     const totalUserWithSameUsername = await this.prismaService.user.count({
@@ -45,7 +45,7 @@ export class UserService {
 
   }
 
-  async login(request: LoginUserRequest): Promise<UserResponse> {
+  async login(request: LoginUserRequest): Promise<UserLoginResponse> {
     this.logger.info(`Logging in user ${JSON.stringify(request)}`);
     const loginRequest: LoginUserRequest = this.validationService.validate(
       UserValidation.LOGIN,
@@ -134,5 +134,30 @@ export class UserService {
         createdAt: user.createdAt.toISOString(),
       }));
     }
+  }
+
+  async update(id: string, request: UpdateUserRequest): Promise<UserResponse> {
+    const UpdateUserRequest: UpdateUserRequest = this.validationService.validate(UserValidation.UPDATE, request);
+    const user = await this.prismaService.user.update({
+      where: {
+        id: id,
+      },
+      data: UpdateUserRequest,
+    });
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      name: user.name,
+    };
+  }
+
+  async Delete(id: string): Promise<boolean> {
+    await this.prismaService.user.delete({
+      where: {
+        id: id,
+      },
+    });
+    return true
   }
 }
